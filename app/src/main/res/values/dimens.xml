@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="et_top_margin">20dp</dimen>
+    <dimen name="tw_color_name_padding">10dp</dimen>
+    <dimen name="dialog_loading_size">100dp</dimen>
+    <dimen name="dialog_loading_padding">24dp</dimen>
+</resources>

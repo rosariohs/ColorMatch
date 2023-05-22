@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.MainActivity">
+
+    <io.fotoapparat.view.CameraView
+        android:id="@+id/camera_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="1dp"
+        android:focusable="auto">
+    </io.fotoapparat.view.CameraView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_result_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.11" />
+    <!--linea superior limites-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_result_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.10" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_result_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_result_botton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <!--        imagen SRC CAMBIAR-->
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/focusBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:src="@drawable/focus_box"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/guide_line_encuadre_h"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/iw_result"
+        android:layout_width="289dp"
+        android:layout_height="277dp"
+        android:background="@color/white"
+        android:contentDescription="@string/imageresultdescription"
+        android:src="@mipmap/ic_launcher_round"
+        app:layout_constraintBottom_toBottomOf="@id/guide_line_result_botton"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
+        app:layout_constraintTop_toTopOf="@id/guide_line_result_top" />
+
+    <TextView
+        android:id="@+id/et_color_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/tw_color_name_padding"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
+        app:layout_constraintTop_toTopOf="@id/guide_line_result_botton" />
+
+    <TextView
+        android:id="@+id/et_complementary_colorName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/tw_color_name_padding"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
+        app:layout_constraintTop_toBottomOf="@id/et_color_name" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonTakePicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:text="@string/take_picture_button_text"
+        app:layout_constraintBottom_toBottomOf="@id/guide_line_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonShowCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_camera_button_text"
+        app:layout_constraintBottom_toBottomOf="@id/guide_line_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.94" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_encuadre_h"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide_line_encuadre_v"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
