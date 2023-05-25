@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">ColorMatch</string>
     <string name="take_picture_button_text">Hacer foto</string>
+    <string name="analize_picture_button_text">Analizar foto</string>
+    <string name="get_picture_button_text">Seleccionar foto</string>
     <string name="show_camera_button_text">Mostrar cámara</string>
     <string name="dialog_ask_camera_permission">Para continuar, necesitamos que de permisos para poder acceder a la cámara</string>
     <string name="dialog_cant_continue_without_camera_permission">No puede hacer una foto si no da permisos para acceder a la cámara</string>
-    <string name="tw_result_format">Color: %1$s</string>
-    <string name="tw_result_format_complementary">Complementario: %1$s</string>
+    <string name="result_format">COLOR: %1$s</string>
+    <string name="result_format_complementary">COMPLEMENTARIO: %1$s</string>
     <string name="accept">Aceptar</string>
+    <string name="button_back">Atrás</string>
     <string name="imageresultdescription">imagen capturada</string>
 </resources>

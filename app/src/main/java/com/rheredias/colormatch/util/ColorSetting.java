@@ -1,10 +1,10 @@
 package com.rheredias.colormatch.util;
 
-public class Result {
+public class ColorSetting {
     public String colorName;
     public Integer colorRGB;
 
-    public Result() {}
+    public ColorSetting() {}
 
     public Integer getColorRGB(){
         return this.colorRGB;

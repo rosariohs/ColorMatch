@@ -15,9 +15,9 @@ public class ColorName {
     }
 
     //aproxima el pixel central a los colores en el hashmap
-    public Result getColor(int pixelColor) {
+    public ColorSetting getColor(int pixelColor) {
 
-        Result result = new Result();
+        ColorSetting result = new ColorSetting();
         // la mayor diferencia es 255 para cada componente de color
         int currentDifference = 3 * 255;
 
@@ -72,7 +72,7 @@ public class ColorName {
         int pixelComplementary = Color.rgb(colorRComplementR, colorGComplementG, colorBComplementB);
 
         //se devuelve el color
-        Result colorComplementaryName = getColor(pixelComplementary);
+        ColorSetting colorComplementaryName = getColor(pixelComplementary);
 
         return colorComplementaryName.getColorName();
     }

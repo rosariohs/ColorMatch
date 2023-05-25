@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
@@ -19,10 +20,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.rheredias.colormatch.R;
+import com.rheredias.colormatch.databinding.ActivityCameraBinding;
 import com.rheredias.colormatch.databinding.ActivityMainBinding;
 import com.rheredias.colormatch.util.ColorName;
+import com.rheredias.colormatch.util.ColorSetting;
 import com.rheredias.colormatch.util.DialogUtil;
-import com.rheredias.colormatch.util.Result;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.log.LoggersKt;
@@ -32,103 +37,149 @@ import io.fotoapparat.selector.FocusModeSelectorsKt;
 import io.fotoapparat.selector.LensPositionSelectorsKt;
 import io.fotoapparat.selector.SelectorsKt;
 
-
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class MainActivity extends AppCompatActivity {
 
     //objeto para enlazar variables con XML
-    private ActivityMainBinding binding;
+    private ActivityCameraBinding bindingCamera;
+    private ActivityMainBinding bindingMain;
+    private Bitmap bitmapPicture;
     //para la cámara: https://androidhiro.com/source/android/example/fotoapparat/5211
-    private Fotoapparat fotoapparat;
+    private Fotoapparat fotoapparat = null;
 
     //AlertDialog se define como la pequeña ventana que muestra un mensaje en
     //particular al usuario cuando el usuario realiza o comete determinada acción
     private AlertDialog loadingAlertDialog;
+    private static final int PICK_PHOTO_REQUEST = 1;
 
-    //lanza los permisos para acceder a la cámara
-    private final ActivityResultLauncher<String> camPermissionLauncher = registerForActivityResult(
+    //variable para manejar el resultado de la solicitud de los permisos para acceder a la cámara
+    private final ActivityResultLauncher<String> camPermissionsLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (!isGranted)
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                         requestCameraPermissionRationale();
-                    else
+                    } else {
                         requestCameraPermissionToContinueDialog();
+                    }
                 else
-                    binding.buttonShowCamera.performClick();
+                    bindingMain.buttonShowCamera.performClick();
             });
 
+    private final ActivityResultLauncher<String> pickMedia = registerForActivityResult
+    (
+            new ActivityResultContracts.GetContent(), uri ->
+            {
+                if (uri != null)
+                {
+                    bitmapPicture = getBitmapFromUri(uri);
+                    bindingCamera.iwResult.setImageURI(uri);
+                }
+            }
+    );
+
+
+    //primero
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        bindingMain = ActivityMainBinding.inflate(getLayoutInflater());
+        bindingCamera = ActivityCameraBinding.inflate(getLayoutInflater());
+        //bindingCamera = ActivityCameraBinding.inflate(getLayoutInflater());
         //se llama al dialogo para aceptar/denegar acceso a la cámara
         loadingAlertDialog = DialogUtil.createLoadingDialog(this);
-        setContentView(binding.getRoot());
-        setupButtonsOnClickListener();
+        setContentView(bindingMain.getRoot());
+        bindingMain.buttonShowCamera.setOnClickListener( v -> showCamera() );
+        bindingCamera.buttonTakePicture.setOnClickListener( v -> takePicture() );
+        bindingMain.buttonGetPicture.setOnClickListener( v -> attachPicture() );
+        bindingCamera.buttonBack.setOnClickListener( v -> onBackPressed() );
+        bindingCamera.buttonAnalyzePicture.setOnClickListener( v -> analizePicture() );
+        //setContentView(bindingCamera.getRoot());
+
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        //si es nullo el objeto para el uso de la cámara, se para
-        if (fotoapparat != null) fotoapparat.stop();
-        loadingAlertDialog.cancel();
+    public void onBackPressed(){
+        setContentView(bindingMain.getRoot());
+        if (fotoapparat != null)
+            fotoapparat = null;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (fotoapparat != null) fotoapparat.start();
+    private Bitmap getBitmapFromUri(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    @Override
-    protected void onPause () {
-        super.onPause();
-        //si es nullo el objeto para el uso de la cámara, se para
-        if (fotoapparat != null) fotoapparat.stop();
-        loadingAlertDialog.cancel();
+    private void analizePicture()
+    {
+        setContentView(bindingCamera.getRoot());
+        setColorAndComplementary(tratammentBitmap(bitmapPicture));
+        bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
+        bindingCamera.buttonTakePicture.setVisibility(View.GONE);
+        bindingCamera.colorName.setVisibility(View.VISIBLE);
+        bindingCamera.complementaryColorName.setVisibility(View.VISIBLE);
+        bindingCamera.buttonBack.setVisibility(View.VISIBLE);
     }
-    //método para chequear los permisos de la cámara
-    private void setupButtonsOnClickListener() {
-        binding.buttonShowCamera.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                if (fotoapparat == null)
-                    startFotoapparat();
 
-                //se visibiliza la cámara
-                v.setVisibility(View.GONE);
-                try {
-                    Thread.sleep(1000); // Pausa de 3 segundos
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                binding.focusBox.setVisibility(View.VISIBLE);
-                binding.buttonTakePicture.setVisibility(View.VISIBLE);
-                binding.cameraView.setVisibility(View.VISIBLE);
-                binding.etColorName.setVisibility(View.GONE);
-                binding.etComplementaryColorName.setVisibility(View.GONE);
+    private void attachPicture() {
+        pickMedia.launch("image/*");
+        setContentView(bindingCamera.getRoot());
+        bindingCamera.buttonAnalyzePicture.setVisibility(View.VISIBLE);
+        bindingCamera.buttonTakePicture.setVisibility(View.GONE);
+        bindingCamera.colorName.setVisibility(View.GONE);
+        bindingCamera.complementaryColorName.setVisibility(View.GONE);
+        bindingCamera.buttonBack.setVisibility(View.VISIBLE);
+        loadingAlertDialog.show();
 
-            } else
-                requestCameraPermissionRationale();
-        });
 
-        //botón evento tomar foto
-        binding.buttonTakePicture.setOnClickListener(v -> {
-            //diálogo de espera de la cámara
-            loadingAlertDialog.show();
-            takePictureFotoapparat();
+    }
 
-            //quitar botón visi
-            v.setVisibility(View.GONE);
-            //muestra botón motrar camara
-            binding.buttonShowCamera.setVisibility(View.VISIBLE);
-            binding.etColorName.setVisibility(View.VISIBLE);
-            binding.etComplementaryColorName.setVisibility(View.VISIBLE);
-            //quita el elemento de la camara
-            binding.cameraView.setVisibility(View.GONE);
-            binding.focusBox.setVisibility(View.GONE);
-        });
+    private void showCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            setContentView(bindingCamera.getRoot());
+            if (fotoapparat == null)
+                startFotoapparat();
+            //setContentView(bindingCamera.getRoot());
+            bindingCamera.iwResult.setVisibility(View.GONE);
+            bindingCamera.cameraView.setVisibility(View.VISIBLE);
+            bindingCamera.buttonTakePicture.setVisibility(View.VISIBLE);
+            bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
+            bindingCamera.colorName.setVisibility(View.GONE);
+            bindingCamera.complementaryColorName.setVisibility(View.GONE);
+            bindingCamera.focusBox.setVisibility(View.VISIBLE);
+
+        } else{
+            requestCameraPermissionRationale();
+        }
+    }
+
+    private void takePicture()
+    {
+        //diálogo de espera de la cámara
+        loadingAlertDialog.show();
+        takePictureFotoapparat();
+        //muestra botón motrar camara
+        bindingCamera.iwResult.setImageBitmap(bitmapPicture);
+        bindingCamera.iwResult.setVisibility(View.VISIBLE);
+        bindingCamera.colorName.setVisibility(View.VISIBLE);
+        bindingCamera.complementaryColorName.setVisibility(View.VISIBLE);
+        bindingCamera.buttonTakePicture.setVisibility(View.GONE);
+        bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
+        bindingCamera.buttonBack.setVisibility(View.VISIBLE);
+        //quita el elemento de la camara
+        bindingCamera.cameraView.setVisibility(View.GONE);
+        bindingCamera.focusBox.setVisibility(View.GONE);
+    }
+
+    //tercero
+    //se activa la cámara
+    private void startFotoapparat() {
+        fotoapparat = createFotoapparat();
+        fotoapparat.start();
     }
 
     private void requestCameraPermissionRationale() {
@@ -137,44 +188,6 @@ public class MainActivity extends AppCompatActivity {
                 (dialog, which) -> camPermissionLauncher.launch(Manifest.permission.CAMERA),
                 getString(R.string.dialog_ask_camera_permission)
         );
-    }
-
-    //permisos para la cámara
-    private void checkCameraPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                camPermissionLauncher.launch(Manifest.permission.CAMERA);
-
-            } else requestCameraPermissionToContinueDialog();
-        }
-    }
-
-    //write external storage
-    // Fotoapparat constructor
-    private Fotoapparat createFotoapparat() {
-        return Fotoapparat
-                .with(this)
-                .into(binding.cameraView)
-                .focusMode(SelectorsKt.firstAvailable(  // (optional) use the first focus mode which is supported by device
-                        FocusModeSelectorsKt.continuousFocusPicture(),
-                        FocusModeSelectorsKt.autoFocus(),        // in case if continuous focus is not available on device, auto focus will be used
-                        FocusModeSelectorsKt.fixed()             // if even auto focus is not available - fixed focus mode will be used
-                ))
-                .previewScaleType(ScaleType.CenterCrop)  // we want the preview to fill the view
-                .lensPosition(LensPositionSelectorsKt.back())       // we want back camera
-                .logger(LoggersKt.loggers(            // (optional) we want to log camera events in 2 places at once
-                        LoggersKt.logcat(),           // ... in logcat
-                        LoggersKt.fileLogger(this)    // ... and to file
-                ))
-                .build();
-
-
-
-    }
-    //se activa la cámara
-    private void startFotoapparat() {
-        fotoapparat = createFotoapparat();
-        fotoapparat.start();
     }
 
     //si se cancelan los permisos a la cámara
@@ -199,44 +212,108 @@ public class MainActivity extends AppCompatActivity {
         this.startActivity(appDetailSettings);
     }
 
+    //lanza los permisos para acceder a la cámara
+    private final ActivityResultLauncher<String> camPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (!isGranted)
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA))
+                        requestCameraPermissionRationale();
+                    else
+                        requestCameraPermissionToContinueDialog();
+                else {
+                    bindingMain.buttonShowCamera.performClick();
+                    //binding.buttonGetPicture.performClick();
+                }
+            });
+
+    //tercero
+    // Fotoapparat constructor
+    private Fotoapparat createFotoapparat() {
+        return Fotoapparat
+                .with(this)
+                .into(bindingCamera.cameraView)
+                .focusMode(SelectorsKt.firstAvailable(
+                        FocusModeSelectorsKt.continuousFocusPicture(),
+                        FocusModeSelectorsKt.autoFocus(),
+                        FocusModeSelectorsKt.fixed()
+                ))
+                .previewScaleType(ScaleType.CenterCrop)
+                .lensPosition(LensPositionSelectorsKt.back())
+                .logger(LoggersKt.loggers(
+                        LoggersKt.logcat(),
+                        LoggersKt.fileLogger(this)
+                ))
+                .build();
+    }
+
+    private Bitmap tratammentBitmap(Bitmap bitmap)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                bitmap.getHeight(), matrix, true);
+        return rotatedBitmap;
+
+    }
+    //cuarto
     //método que toma la fotografía
     private void takePictureFotoapparat() {
         PhotoResult photoResult = fotoapparat.takePicture();
-
         //final File file = new File(getExternalFilesDir("photos"), "photo.jpg");
         //photoResult.saveToFile(file);
 
         //pasa el resultado a Bitmap
         photoResult.toBitmap()
                 .whenDone(bitmapPhoto -> {
-                    if (bitmapPhoto == null) return;
+                    if (bitmapPhoto == null);
                     Bitmap bitmap = bitmapPhoto.bitmap;
                     Matrix matrix = new Matrix();
                     matrix.postRotate(90);
                     Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                             bitmap.getHeight(), matrix, true);
                     setColorAndComplementary(rotatedBitmap);
+                    //se añade la foto a la pantalla
+                    bindingCamera.iwResult.setImageBitmap(rotatedBitmap);
                 });
     }
 
     private void setColorAndComplementary(final Bitmap bitmap) {
-        binding.iwResult.setImageBitmap(bitmap);
+        bitmapPicture = bitmap;
         //coge el pixel central de la fotografía
-        int pixel = bitmap.getPixel(bitmap.getWidth()/2, bitmap.getHeight()/2);
+        int pixel = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
         ColorName colorName = new ColorName();
-        Result color = colorName.getColor(pixel);
+        ColorSetting color = colorName.getColor(pixel);
         String colorComplementary = colorName.getComplementaryColor(color.colorRGB);
 
 
-        binding.etColorName.setText(getString(R.string.tw_result_format, color.colorName));
-        binding.etComplementaryColorName.setText(getString(R.string.tw_result_format_complementary,
-                colorComplementary));
+        bindingCamera.colorName.setText(getString(R.string.result_format, color.colorName));
+        bindingCamera.complementaryColorName.setText(getString(R.string.result_format_complementary, colorComplementary));
 
         loadingAlertDialog.cancel();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //si es nullo el objeto para el uso de la cámara, se para
+        if (fotoapparat != null) fotoapparat.stop();
+        loadingAlertDialog.cancel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (fotoapparat != null) fotoapparat.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //si es nullo el objeto para el uso de la cámara, se para
+        if (fotoapparat != null) fotoapparat.stop();
+        loadingAlertDialog.cancel();
+    }
 }
-
-
 
 
 
