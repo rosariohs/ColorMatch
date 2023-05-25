@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap bitmapPicture;
     //para la cámara: https://androidhiro.com/source/android/example/fotoapparat/5211
     private Fotoapparat fotoapparat = null;
-
+    private boolean flagAttachPicture;
     //AlertDialog se define como la pequeña ventana que muestra un mensaje en
     //particular al usuario cuando el usuario realiza o comete determinada acción
     private AlertDialog loadingAlertDialog;
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     bindingMain.buttonShowCamera.performClick();
             });
 
-    private final ActivityResultLauncher<String> pickMedia = registerForActivityResult
+    private final ActivityResultLauncher<String> pickPicture = registerForActivityResult
     (
             new ActivityResultContracts.GetContent(), uri ->
             {
@@ -73,7 +74,10 @@ public class MainActivity extends AppCompatActivity {
                 {
                     bitmapPicture = getBitmapFromUri(uri);
                     bindingCamera.iwResult.setImageURI(uri);
-                }
+                    flagAttachPicture = true;
+                }else
+                    Toast.makeText(getApplicationContext(),"No se seleccionó ninguna foto", Toast.LENGTH_SHORT).show();
+                    flagAttachPicture = false;
             }
     );
 
@@ -116,17 +120,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void analizePicture()
     {
-        setContentView(bindingCamera.getRoot());
-        setColorAndComplementary(tratammentBitmap(bitmapPicture));
-        bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
-        bindingCamera.buttonTakePicture.setVisibility(View.GONE);
-        bindingCamera.colorName.setVisibility(View.VISIBLE);
-        bindingCamera.complementaryColorName.setVisibility(View.VISIBLE);
-        bindingCamera.buttonBack.setVisibility(View.VISIBLE);
+        if (flagAttachPicture == false) {
+            setContentView(bindingMain.getRoot());
+        }else
+        {
+            setContentView(bindingCamera.getRoot());
+            setColorAndComplementary(tratammentBitmap(bitmapPicture));
+            bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
+            bindingCamera.buttonTakePicture.setVisibility(View.GONE);
+            bindingCamera.colorName.setVisibility(View.VISIBLE);
+            bindingCamera.complementaryColorName.setVisibility(View.VISIBLE);
+            bindingCamera.buttonBack.setVisibility(View.VISIBLE);
+        }
     }
 
     private void attachPicture() {
-        pickMedia.launch("image/*");
+        pickPicture.launch("image/*");
         setContentView(bindingCamera.getRoot());
         bindingCamera.buttonAnalyzePicture.setVisibility(View.VISIBLE);
         bindingCamera.buttonTakePicture.setVisibility(View.GONE);
@@ -134,8 +143,6 @@ public class MainActivity extends AppCompatActivity {
         bindingCamera.complementaryColorName.setVisibility(View.GONE);
         bindingCamera.buttonBack.setVisibility(View.VISIBLE);
         loadingAlertDialog.show();
-
-
     }
 
     private void showCamera() {
