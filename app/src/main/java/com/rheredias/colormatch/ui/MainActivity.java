@@ -75,9 +75,11 @@ public class MainActivity extends AppCompatActivity {
                     bitmapPicture = getBitmapFromUri(uri);
                     bindingCamera.iwResult.setImageURI(uri);
                     flagAttachPicture = true;
-                }else
-                    Toast.makeText(getApplicationContext(),"No se seleccionó ninguna foto", Toast.LENGTH_SHORT).show();
+                }else {
                     flagAttachPicture = false;
+                    Toast.makeText(getApplicationContext(), "No se seleccionó ninguna foto", Toast.LENGTH_SHORT).show();
+                }
+
             }
     );
 
@@ -138,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
         pickPicture.launch("image/*");
         setContentView(bindingCamera.getRoot());
         bindingCamera.buttonAnalyzePicture.setVisibility(View.VISIBLE);
+        bindingCamera.focusBox.setVisibility(View.GONE);
+        bindingCamera.cameraView.setVisibility(View.GONE);
+        bindingCamera.iwResult.setVisibility(View.VISIBLE);
         bindingCamera.buttonTakePicture.setVisibility(View.GONE);
         bindingCamera.colorName.setVisibility(View.GONE);
         bindingCamera.complementaryColorName.setVisibility(View.GONE);
@@ -148,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
     private void showCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             setContentView(bindingCamera.getRoot());
+            Toast.makeText(getApplicationContext(), "Centra el color a identificar en el recuadro", Toast.LENGTH_LONG).show();
             if (fotoapparat == null)
                 startFotoapparat();
             //setContentView(bindingCamera.getRoot());
