@@ -89,11 +89,27 @@
     <TextView
         android:id="@+id/color_name"
         android:layout_width="0dp"
-        android:gravity="center"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:gravity="center"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/complementary_colorName"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
+        app:layout_constraintTop_toTopOf="@id/guide_line_result_botton" />
+
+    <TextView
+        android:id="@+id/color_suggestion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="165dp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/buttonTakePicture"
         app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
         app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
         app:layout_constraintTop_toTopOf="@id/guide_line_result_botton" />
@@ -101,12 +117,12 @@
     <TextView
         android:id="@+id/complementary_colorName"
         android:layout_width="0dp"
-        android:gravity="center"
-        android:textStyle="bold"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:padding="@dimen/tw_color_name_padding"
         android:textColor="@color/black"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
         app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
         app:layout_constraintTop_toBottomOf="@id/color_name" />

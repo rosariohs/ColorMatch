@@ -2,15 +2,9 @@ package com.rheredias.colormatch.util;
 
 public class ColorSetting {
     public String colorName;
-    public Integer colorRGB;
+    public String colorNameComplementary;
+    public String colorNameSuggestion;
+    public Integer colorRGBComplementary;
 
     public ColorSetting() {}
-
-    public Integer getColorRGB(){
-        return this.colorRGB;
-    }
-
-    public String getColorName(){
-        return this.colorName;
-    }
 };

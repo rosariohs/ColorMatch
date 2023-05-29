@@ -8,6 +8,7 @@
     <string name="dialog_cant_continue_without_camera_permission">No puede hacer una foto si no da permisos para acceder a la cámara</string>
     <string name="result_format">COLOR: %1$s</string>
     <string name="result_format_complementary">COMPLEMENTARIO: %1$s</string>
+    <string name="suggestion">%1$s</string>
     <string name="accept">Aceptar</string>
     <string name="button_back">Atrás</string>
     <string name="imageresultdescription">imagen capturada</string>

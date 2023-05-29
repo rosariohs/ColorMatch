@@ -24,7 +24,6 @@ import com.rheredias.colormatch.R;
 import com.rheredias.colormatch.databinding.ActivityCameraBinding;
 import com.rheredias.colormatch.databinding.ActivityMainBinding;
 import com.rheredias.colormatch.util.ColorName;
-import com.rheredias.colormatch.util.ColorSetting;
 import com.rheredias.colormatch.util.DialogUtil;
 
 import java.io.FileNotFoundException;
@@ -51,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     //AlertDialog se define como la pequeña ventana que muestra un mensaje en
     //particular al usuario cuando el usuario realiza o comete determinada acción
     private AlertDialog loadingAlertDialog;
-    private static final int PICK_PHOTO_REQUEST = 1;
 
     //variable para manejar el resultado de la solicitud de los permisos para acceder a la cámara
     private final ActivityResultLauncher<String> camPermissionsLauncher = registerForActivityResult(
@@ -82,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
     );
-
 
     //primero
     @Override
@@ -132,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
             bindingCamera.buttonTakePicture.setVisibility(View.GONE);
             bindingCamera.colorName.setVisibility(View.VISIBLE);
             bindingCamera.complementaryColorName.setVisibility(View.VISIBLE);
+            bindingCamera.colorSuggestion.setVisibility(View.VISIBLE);
             bindingCamera.buttonBack.setVisibility(View.VISIBLE);
         }
     }
@@ -146,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
         bindingCamera.buttonTakePicture.setVisibility(View.GONE);
         bindingCamera.colorName.setVisibility(View.GONE);
         bindingCamera.complementaryColorName.setVisibility(View.GONE);
+        bindingCamera.colorSuggestion.setVisibility(View.GONE);
         bindingCamera.buttonBack.setVisibility(View.VISIBLE);
         loadingAlertDialog.show();
     }
@@ -163,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
             bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
             bindingCamera.colorName.setVisibility(View.GONE);
             bindingCamera.complementaryColorName.setVisibility(View.GONE);
+            bindingCamera.colorSuggestion.setVisibility(View.GONE);
             bindingCamera.focusBox.setVisibility(View.VISIBLE);
 
         } else{
@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
         bindingCamera.iwResult.setVisibility(View.VISIBLE);
         bindingCamera.colorName.setVisibility(View.VISIBLE);
         bindingCamera.complementaryColorName.setVisibility(View.VISIBLE);
+        bindingCamera.colorSuggestion.setVisibility(View.VISIBLE);
         bindingCamera.buttonTakePicture.setVisibility(View.GONE);
         bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
         bindingCamera.buttonBack.setVisibility(View.VISIBLE);
@@ -294,13 +295,16 @@ public class MainActivity extends AppCompatActivity {
         bitmapPicture = bitmap;
         //coge el pixel central de la fotografía
         int pixel = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+
         ColorName colorName = new ColorName();
-        ColorSetting color = colorName.getColor(pixel);
-        String colorComplementary = colorName.getComplementaryColor(color.colorRGB);
+        colorName.processColor(pixel);
+        colorName.processComplementaryColor(pixel);
+        colorName.processSuggestion(colorName.colorSetting.colorRGBComplementary);
 
-
-        bindingCamera.colorName.setText(getString(R.string.result_format, color.colorName));
-        bindingCamera.complementaryColorName.setText(getString(R.string.result_format_complementary, colorComplementary));
+        bindingCamera.colorName.setText(getString(R.string.result_format, colorName.colorSetting.colorName));
+        bindingCamera.complementaryColorName.setText(getString(R.string.result_format_complementary, colorName.colorSetting.colorNameComplementary));
+        //getSuggestion
+        bindingCamera.colorSuggestion.setText(getString(R.string.suggestion, colorName.colorSetting.colorNameSuggestion));
 
         loadingAlertDialog.cancel();
     }
