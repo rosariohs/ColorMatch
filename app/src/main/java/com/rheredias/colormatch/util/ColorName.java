@@ -3,7 +3,18 @@ import android.graphics.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ColorName {
+
+    public class ColorSetting {
+        public String colorName;
+        public String colorNameComplementary;
+        public String colorNameSuggestion;
+        public Integer colorRGBComplementary;
+
+        public ColorSetting() {}
+    }
+
     private final HashMap<String, Integer> colorHashMapGeneral;
     //para gama de colores sugerido
     private final HashMap<String, Integer> colorHashMapBasic;
@@ -14,7 +25,7 @@ public class ColorName {
         colorHashMapBasic = initbasicColor();
     }
 
-    public String idenifyColorPixel(int pixel, HashMap<String, Integer> colorHashMap, boolean complementary)
+    public String identifyColorPixel(int pixel, HashMap<String, Integer> colorHashMap, boolean complementary)
     {
         // nombre del mejor color aproximado, a principio null
         String colorName = null;
@@ -65,18 +76,18 @@ public class ColorName {
     }
     //aproxima el pixel central a los colores en el hashmap
     public void processColor(int pixel) {
-        colorSetting.colorName = idenifyColorPixel(pixel, colorHashMapGeneral, false);
+        colorSetting.colorName = identifyColorPixel(pixel, colorHashMapGeneral, false);
     }
 
 
     //aproxima el pixel central a los colores en el hashmap
     public void processComplementaryColor(int pixel) {
-        colorSetting.colorNameComplementary = idenifyColorPixel(pixel, colorHashMapGeneral, true);
+        colorSetting.colorNameComplementary = identifyColorPixel(pixel, colorHashMapGeneral, true);
     }
 
     //sugerencia
     public void processSuggestion(int pixel) {
-        colorSetting.colorNameSuggestion = idenifyColorPixel(pixel, colorHashMapBasic, false);
+        colorSetting.colorNameSuggestion = identifyColorPixel(pixel, colorHashMapBasic, false);
     }
 
     public HashMap<String, Integer> initbasicColor() {

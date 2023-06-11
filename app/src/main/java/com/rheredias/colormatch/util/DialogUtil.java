@@ -28,6 +28,9 @@ public class DialogUtil {
   }
 
   public static AlertDialog createLoadingDialog(Context context) {
+    if (context == null) {
+      throw new IllegalArgumentException("Context cannot be null");
+    }
     return new AlertDialog.Builder(context, R.style.TransparentAlertDialogTheme)
         .setView(R.layout.dialog_loading)
         .setCancelable(false)

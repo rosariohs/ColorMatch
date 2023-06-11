@@ -80,31 +80,18 @@
         android:layout_height="277dp"
         android:background="@color/white"
         android:contentDescription="@string/imageresultdescription"
+        android:src="@drawable/photo"
         app:layout_constraintBottom_toBottomOf="@id/guide_line_result_botton"
         app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
         app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
         app:layout_constraintTop_toTopOf="@id/guide_line_result_top"
-        android:src="@drawable/photo" />
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/color_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/complementary_colorName"
-        app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
-        app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
-        app:layout_constraintTop_toTopOf="@id/guide_line_result_botton" />
-
-    <TextView
-        android:id="@+id/color_suggestion"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="165dp"
+        android:layout_marginBottom="160dp"
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="20sp"
@@ -115,9 +102,25 @@
         app:layout_constraintTop_toTopOf="@id/guide_line_result_botton" />
 
     <TextView
+        android:id="@+id/color_suggestion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/complementary_colorName"
+        app:layout_constraintEnd_toEndOf="@id/guide_line_result_end"
+        app:layout_constraintStart_toStartOf="@id/guide_line_result_start"
+        app:layout_constraintTop_toTopOf="@id/guide_line_result_botton" />
+
+    <TextView
         android:id="@+id/complementary_colorName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
         android:gravity="center"
         android:padding="@dimen/tw_color_name_padding"
         android:textColor="@color/black"
@@ -153,7 +156,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="250dp"
         android:contentDescription="@string/button_back"
-        android:text="Atrás"
+        android:text="@string/button_back"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

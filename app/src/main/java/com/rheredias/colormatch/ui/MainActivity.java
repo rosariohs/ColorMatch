@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean flagAttachPicture;
     //AlertDialog se define como la pequeña ventana que muestra un mensaje en
     //particular al usuario cuando el usuario realiza o comete determinada acción
-    private AlertDialog loadingAlertDialog;
+    AlertDialog loadingAlertDialog;
 
     //variable para manejar el resultado de la solicitud de los permisos para acceder a la cámara
     private final ActivityResultLauncher<String> camPermissionsLauncher = registerForActivityResult(
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             fotoapparat = null;
     }
 
-    private Bitmap getBitmapFromUri(Uri uri) {
+    Bitmap getBitmapFromUri(Uri uri) {
         try {
             InputStream inputStream = getContentResolver().openInputStream(uri);
             return BitmapFactory.decodeStream(inputStream);
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void attachPicture() {
+    void attachPicture() {
         pickPicture.launch("image/*");
         setContentView(bindingCamera.getRoot());
         bindingCamera.buttonAnalyzePicture.setVisibility(View.VISIBLE);
@@ -276,22 +276,22 @@ public class MainActivity extends AppCompatActivity {
         //final File file = new File(getExternalFilesDir("photos"), "photo.jpg");
         //photoResult.saveToFile(file);
 
-        //pasa el resultado a Bitmap
+            //pasa el resultado a Bitmap
         photoResult.toBitmap()
                 .whenDone(bitmapPhoto -> {
-                    if (bitmapPhoto == null);
-                    Bitmap bitmap = bitmapPhoto.bitmap;
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                            bitmap.getHeight(), matrix, true);
-                    setColorAndComplementary(rotatedBitmap);
-                    //se añade la foto a la pantalla
-                    bindingCamera.iwResult.setImageBitmap(rotatedBitmap);
-                });
+                    if (bitmapPhoto != null) {
+                        Bitmap bitmap = bitmapPhoto.bitmap;
+                        Matrix matrix = new Matrix();
+                        matrix.postRotate(90);
+                        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                                bitmap.getHeight(), matrix, true);
+                        setColorAndComplementary(rotatedBitmap);
+                        //se añade la foto a la pantalla
+                        bindingCamera.iwResult.setImageBitmap(rotatedBitmap);
+                    }});
     }
 
-    private void setColorAndComplementary(final Bitmap bitmap) {
+    void setColorAndComplementary(final Bitmap bitmap) {
         bitmapPicture = bitmap;
         //coge el pixel central de la fotografía
         int pixel = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);

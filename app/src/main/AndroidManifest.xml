@@ -14,6 +14,7 @@
         android:theme="@style/Theme.Colormatch">
         <activity
             android:name="com.rheredias.colormatch.ui.MainActivity"
+            android:label=""
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
