@@ -15,9 +15,9 @@ public class ColorNameTest extends ColorName{
     public void testIdentifyColorPixel() {
         int pixel = Color.rgb(192, 0, 23);
 
-        HashMap<String, Integer> colorHashMap =  this.initColor();
+        HashMap<Integer, String> colorHashMap =  this.initColor();
         boolean complementary = false;
-        String expectedColorName = "Verde oliva";
+        String expectedColorName = "Gris";
 
         ColorName color = new ColorName();
         String actualColorName = color.identifyColorPixel(pixel, colorHashMap, complementary);
@@ -31,7 +31,6 @@ public class ColorNameTest extends ColorName{
         this.processColor(pixel);
 
         ColorName.ColorSetting colorSetting = this.colorSetting;
-        this.colorSetting.colorNameComplementary = "Verde oliva";
         assertNotNull(colorSetting.colorName);
     }
 

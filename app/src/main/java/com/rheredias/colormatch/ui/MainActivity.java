@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
     void setColorAndComplementary(final Bitmap bitmap) {
         bitmapPicture = bitmap;
         //coge el pixel central de la fotografía
-        int pixel = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+        Integer pixel = bitmap.getPixel(bitmap.getWidth() / 2, bitmap.getHeight() / 2);
 
         ColorName colorName = new ColorName();
         colorName.processColor(pixel);
