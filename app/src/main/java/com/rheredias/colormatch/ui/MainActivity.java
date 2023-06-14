@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         }else
         {
             setContentView(bindingCamera.getRoot());
+            Toast.makeText(getApplicationContext(), "El color identificado corresponde a la zona centra de la imagen", Toast.LENGTH_LONG).show();
             setColorAndComplementary(tratammentBitmap(bitmapPicture));
             bindingCamera.buttonAnalyzePicture.setVisibility(View.GONE);
             bindingCamera.buttonTakePicture.setVisibility(View.GONE);
