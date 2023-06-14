@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void analizePicture()
     {
-        if (flagAttachPicture == false) {
+        if (!flagAttachPicture) {
             setContentView(bindingMain.getRoot());
         }else
         {
