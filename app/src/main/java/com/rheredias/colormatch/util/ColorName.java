@@ -7,7 +7,8 @@ import java.util.Map;
 
 public class ColorName {
 
-    public class ColorSetting {
+    //clase para almacenar los resultados
+    public static class ColorSetting {
         public String colorName;
         public String colorNameComplementary;
         public String colorNameSuggestion;
@@ -16,17 +17,22 @@ public class ColorName {
         public ColorSetting() {}
     }
 
+    //para colores a indentificar y calculo del complementario
     private final HashMap<Integer, String> colorHashMapGeneral;
     //para gama de colores sugerido
     private final HashMap<Integer, String> colorHashMapBasic;
+
     public final ColorSetting colorSetting = new ColorSetting();
 
+    //constructor
     public ColorName() {
         colorHashMapGeneral = initColor();
         colorHashMapBasic = initbasicColor();
     }
 
-    public String identifyColorPixel(int pixel, HashMap<Integer, String> colorHashMap, boolean complementary)
+    //algoritmo de identificacion
+    public String identifyColorPixel(int pixel, HashMap<Integer, String> colorHashMap,
+                                     boolean complementary)
     {
         // nombre del mejor color aproximado, a principio null
         String colorName = null;
@@ -57,10 +63,10 @@ public class ColorName {
             int colorG = Color.green(colorRGBAux);
             int colorB = Color.blue(colorRGBAux);
 
-            //se calcula la diferencia
+            //se calcula la diferencia entre el color del hashmap y el color captado
             int difference = Math.abs(pixelColorR - colorR) + Math.abs(pixelColorG - colorG) + Math.abs(pixelColorB - colorB);
 
-            //nos quedamos con el que la diferencia es mejor
+            //se guarda el que la diferencia sea menor
             if (currentDifference > difference) {
                 currentDifference = difference;
                 colorName = colorNameAux;
@@ -86,11 +92,12 @@ public class ColorName {
         colorSetting.colorNameComplementary = identifyColorPixel(pixel, colorHashMapGeneral, true);
     }
 
-    //sugerencia
+    //sugerencia de gamas
     public void processSuggestion(Integer pixel) {
         colorSetting.colorNameSuggestion = identifyColorPixel(pixel, colorHashMapBasic, false);
     }
 
+    //hasmap con gamas de colores
     public HashMap<Integer, String> initbasicColor() {
         HashMap<Integer, String> mColors = new HashMap<>();
 
@@ -123,6 +130,7 @@ public class ColorName {
         return mColors;
     }
 
+    //hasmap con base de datos de colores para las aproximaciones
     @SuppressLint("Range")
     public HashMap<Integer, String> initColor() {
         HashMap<Integer, String> mColors = new HashMap<>();
@@ -735,7 +743,7 @@ public class ColorName {
         mColors.put(Color.rgb(153,141,141), "Gris oscuro");
         mColors.put(Color.rgb(255,255,255), "Blanco");
         mColors.put(Color.rgb(245,245,245), "Blanco");
-        mColors.put(Color.rgb(192,192,192), "Gris claro");
+        mColors.put(Color.rgb(192,192,192), "Gris claro645");
         mColors.put(Color.rgb(0,0,0), "Negro");
         mColors.put(Color.rgb(247,247,247), "Gris claro");
         mColors.put(Color.rgb(245,245,245), "Blanco");

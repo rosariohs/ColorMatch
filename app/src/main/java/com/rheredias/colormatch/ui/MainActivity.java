@@ -37,6 +37,7 @@ import io.fotoapparat.selector.FocusModeSelectorsKt;
 import io.fotoapparat.selector.LensPositionSelectorsKt;
 import io.fotoapparat.selector.SelectorsKt;
 
+//Marshmallow (nivel de API 23)
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class MainActivity extends AppCompatActivity {
 
@@ -81,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             }
     );
 
-    //primero
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
         bindingCamera.focusBox.setVisibility(View.GONE);
     }
 
-    //tercero
     //se activa la cámara
     private void startFotoapparat() {
         fotoapparat = createFotoapparat();
@@ -241,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-    //tercero
     // Fotoapparat constructor
     private Fotoapparat createFotoapparat() {
         return Fotoapparat
@@ -265,19 +263,16 @@ public class MainActivity extends AppCompatActivity {
     {
         Matrix matrix = new Matrix();
         matrix.postRotate(90);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
-        return rotatedBitmap;
 
     }
-    //cuarto
+
     //método que toma la fotografía
     private void takePictureFotoapparat() {
         PhotoResult photoResult = fotoapparat.takePicture();
-        //final File file = new File(getExternalFilesDir("photos"), "photo.jpg");
-        //photoResult.saveToFile(file);
 
-            //pasa el resultado a Bitmap
+        //pasa el resultado a Bitmap
         photoResult.toBitmap()
                 .whenDone(bitmapPhoto -> {
                     if (bitmapPhoto != null) {
